@@ -303,4 +303,148 @@ document.addEventListener('DOMContentLoaded', function() {
             border-radius: 8px;
             background: ${type === 'error' ? '#fee' : '#dfd'};
             color: ${type === 'error' ? '#c00' : '#080'};
-            box-shadow: 0 4px 12px rgba(0,0,0,
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+    
+    // Отображение результатов
+    function displayResults(data) {
+        // Показываем секцию результатов
+        resultsSection.classList.remove('hidden');
+        
+        // Домен
+        document.getElementById('domainResult').textContent = data.domain;
+        
+        // Безопасность
+        const securityEl = document.getElementById('securityResult');
+        if (data.checks.https) {
+            securityEl.textContent = '✅ HTTPS (безопасно)';
+            securityEl.className = 'result-value text-success';
+        } else {
+            securityEl.textContent = '❌ HTTP (небезопасно)';
+            securityEl.className = 'result-value text-danger';
+        }
+        
+        // Статус (имитация)
+        const ageEl = document.getElementById('ageResult');
+        if (data.risk_level === 'high') {
+            ageEl.textContent = '🚨 Высокий риск';
+            ageEl.className = 'result-value text-danger';
+        } else if (data.risk_level === 'medium') {
+            ageEl.textContent = '⚠️ Средний риск';
+            ageEl.className = 'result-value text-warning';
+        } else {
+            ageEl.textContent = '✅ Низкий риск';
+            ageEl.className = 'result-value text-success';
+        }
+        
+        // Риски
+        const risksEl = document.getElementById('risksResult');
+        risksEl.textContent = `${data.warnings.length} предупреждений`;
+        risksEl.className = `result-value ${data.risk_level === 'high' ? 'text-danger' : 
+                           data.risk_level === 'medium' ? 'text-warning' : 'text-success'}`;
+        
+        // Бейдж риска
+        const riskBadge = document.getElementById('riskBadge');
+        riskBadge.className = `risk-badge risk-${data.risk_level}`;
+        
+        let riskText;
+        switch(data.risk_level) {
+            case 'high':
+                riskText = '🚨 Высокий риск';
+                break;
+            case 'medium':
+                riskText = '⚠️ Средний риск';
+                break;
+            default:
+                riskText = '✅ Низкий риск';
+        }
+        
+        riskBadge.querySelector('.risk-text').textContent = riskText;
+        
+        // Предупреждения
+        const warningsList = document.getElementById('warningsList');
+        warningsList.innerHTML = '';
+        
+        if (data.warnings && data.warnings.length > 0) {
+            data.warnings.forEach(warning => {
+                const item = document.createElement('div');
+                item.className = `warning-item ${warning.level === 'high' ? 'danger' : ''}`;
+                item.innerHTML = `
+                    <div class="warning-icon">${warning.level === 'high' ? '🚨' : '⚠️'}</div>
+                    <div>
+                        <strong>${warning.text}</strong>
+                        ${warning.details ? `<br><small>${warning.details}</small>` : ''}
+                    </div>
+                `;
+                warningsList.appendChild(item);
+            });
+        } else {
+            const item = document.createElement('div');
+            item.className = 'warning-item';
+            item.innerHTML = `
+                <div class="warning-icon">✅</div>
+                <div>
+                    <strong>Явных признаков фишинга не обнаружено</strong>
+                    <br><small>Однако всегда оставайтесь внимательными</small>
+                </div>
+            `;
+            warningsList.appendChild(item);
+        }
+        
+        // Прокрутка к результатам
+        resultsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Генерация отчета
+    function generateReport() {
+        const domain = document.getElementById('domainResult').textContent;
+        const risk = document.getElementById('riskBadge').querySelector('.risk-text').textContent;
+        const warnings = Array.from(document.querySelectorAll('.warning-item'))
+            .map(item => {
+                const text = item.querySelector('strong').textContent;
+                const details = item.querySelector('small')?.textContent || '';
+                return `• ${text}${details ? ` (${details})` : ''}`;
+            })
+            .join('\n');
+        
+        return `🐟 FishScan - Отчет проверки\n` +
+               `===========================\n` +
+               `URL: ${domain}\n` +
+               `Уровень риска: ${risk}\n` +
+               `Время проверки: ${new Date().toLocaleString('ru-RU')}\n` +
+               `\n` +
+               `ПРЕДУПРЕЖДЕНИЯ:\n` +
+               `${warnings || '• Нет предупреждений'}\n` +
+               `\n` +
+               `⚠️ ВАЖНО:\n` +
+               `• Этот отчет сгенерирован автоматически\n` +
+               `• Не является гарантией безопасности\n` +
+               `• Всегда проверяйте сайты вручную\n` +
+               `• Разработано: @lox-clou\n` +
+               `• GitHub: https://github.com/lox-clou/fishscan`;
+    }
+    
+    // Добавляем стили для анимаций
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+});
