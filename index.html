@@ -3,126 +3,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PhishScan - Сканер фишинговых сайтов</title>
+    <title>FishScan - Сканер фишинговых сайтов от lox-clou</title>
+    <meta name="description" content="Бесплатный онлайн-сканер фишинговых URL. Проверяет домены на подозрительные признаки.">
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐟</text></svg>">
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <nav class="nav">
-                <div class="logo">🔍 PhishScan</div>
-                <div class="nav-links">
-                    <a href="index.html" class="active">Сканер</a>
-                    <a href="about.html">Как это работает</a>
-                    <a href="https://github.com/yourusername/phishscan-site" target="_blank">GitHub</a>
-                </div>
-            </nav>
-            
-            <div class="hero">
-                <h1>Проверьте сайт на фишинг</h1>
-                <p class="subtitle">Бесплатный онлайн-сканер. Проверяет домен на подозрительные признаки.</p>
-                
-                <div class="scanner-box">
-                    <div class="input-container">
-                        <input type="text" 
-                               id="urlInput" 
-                               placeholder="Введите URL (например: https://example.com)"
-                               autocomplete="off">
-                        <button id="scanBtn" class="scan-btn">
-                            <span class="btn-text">Проверить</span>
-                            <span class="spinner hidden">⏳</span>
-                        </button>
+    <div class="page-wrapper">
+        <!-- Шапка с ником -->
+        <header class="site-header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        🐟 <strong>FishScan</strong>
+                        <span class="beta-badge">by lox-clou</span>
                     </div>
+                    <nav class="header-nav">
+                        <a href="#scanner" class="nav-link">Сканер</a>
+                        <a href="#how-it-works" class="nav-link">Как работает</a>
+                        <a href="#tips" class="nav-link">Защита</a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="container">
+                <!-- Главный сканер -->
+                <section id="scanner" class="scanner-section">
+                    <h1 class="hero-title">Отлови фишинг как <span class="highlight">профессионал</span></h1>
+                    <p class="hero-subtitle">Бесплатный сканер URL от <strong>@lox-clou</strong>. Проверяет домены на подозрительные признаки за секунды.</p>
                     
-                    <div class="examples">
-                        <p>Примеры для теста:</p>
-                        <div class="example-tags">
-                            <button class="tag" data-url="https://github.com">github.com</button>
-                            <button class="tag" data-url="http://faceb00k-login.ru">faceb00k-login.ru</button>
-                            <button class="tag" data-url="https://my-paypal-verify.com">my-paypal-verify.com</button>
+                    <div class="scanner-box">
+                        <div class="input-group">
+                            <input type="text" 
+                                   id="urlInput" 
+                                   class="url-input"
+                                   placeholder="https://подозрительный-сайт.xyz"
+                                   autocomplete="off">
+                            <button id="scanBtn" class="scan-btn">
+                                <span class="btn-text">Проверить URL</span>
+                                <span class="spinner">⏳</span>
+                            </button>
+                        </div>
+                        
+                        <div class="examples">
+                            <p class="examples-title">Быстрые примеры:</p>
+                            <div class="example-tags">
+                                <button class="tag" data-url="https://github.com">github.com</button>
+                                <button class="tag" data-url="http://faceb00k-login.ru">faceb00k-login.ru</button>
+                                <button class="tag" data-url="https://my-paypal-verify.net">my-paypal-verify.net</button>
+                                <button class="tag" data-url="https://lox-clou.github.io">lox-clou.github.io</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </header>
+                </section>
 
-    <main class="container">
-        <div id="results" class="hidden">
-            <div class="result-header">
-                <h2>Результаты проверки</h2>
-                <div class="risk-badge" id="riskBadge">
-                    <span class="risk-dot"></span>
-                    <span class="risk-text">Анализ...</span>
-                </div>
-            </div>
-            
-            <div class="results-grid">
-                <div class="result-card">
-                    <h3>🌐 Домен</h3>
-                    <p id="domainResult" class="result-value">—</p>
-                </div>
-                
-                <div class="result-card">
-                    <h3>🔒 Безопасность</h3>
-                    <p id="securityResult" class="result-value">—</p>
-                </div>
-                
-                <div class="result-card">
-                    <h3>📅 Возраст</h3>
-                    <p id="ageResult" class="result-value">—</p>
-                </div>
-                
-                <div class="result-card">
-                    <h3>⚠️ Риски</h3>
-                    <p id="risksResult" class="result-value">—</p>
-                </div>
-            </div>
-            
-            <div class="detailed-results">
-                <h3>Детальный анализ</h3>
-                <div id="warningsList" class="warnings-list">
-                    <!-- Сюда добавляются предупреждения -->
-                </div>
-            </div>
-            
-            <div class="actions">
-                <button id="newScanBtn" class="btn-secondary">Новая проверка</button>
-                <button id="copyBtn" class="btn-secondary">Копировать отчет</button>
-            </div>
-        </div>
-        
-        <div class="info-section">
-            <h3>📌 Как защититься от фишинга?</h3>
-            <div class="tips">
-                <div class="tip">
-                    <div class="tip-icon">🔐</div>
-                    <p>Всегда проверяйте адресную строку</p>
-                </div>
-                <div class="tip">
-                    <div class="tip-icon">👁️</div>
-                    <p>Ищите опечатки в доменном имени</p>
-                </div>
-                <div class="tip">
-                    <div class="tip-icon">🚫</div>
-                    <p>Не вводите данные на подозрительных сайтах</p>
-                </div>
-            </div>
-        </div>
-    </main>
+                <!-- Результаты (изначально скрыты) -->
+                <section id="results" class="results-section hidden">
+                    <div class="results-header">
+                        <h2>Результаты проверки</h2>
+                        <div class="risk-badge" id="riskBadge">
+                            <span class="risk-dot"></span>
+                            <span class="risk-text">Анализ...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="results-grid">
+                        <div class="result-card">
+                            <div class="result-icon">🌐</div>
+                            <h3>Домен</h3>
+                            <p id="domainResult" class="result-value">—</p>
+                        </div>
+                        
+                        <div class="result-card">
+                            <div class="result-icon">🔒</div>
+                            <h3>Безопасность</h3>
+                            <p id="securityResult" class="result-value">—</p>
+                        </div>
+                        
+                        <div class="result-card">
+                            <div class="result-icon">📅</div>
+                            <h3>Статус</h3>
+                            <p id="ageResult" class="result-value">—</p>
+                        </div>
+                        
+                        <div class="result-card">
+                            <div class="result-icon">⚠️</div>
+                            <h3>Риски</h3>
+                            <p id="risksResult" class="result-value">—</p>
+                        </div>
+                    </div>
+                    
+                    <div class="detailed-results">
+                        <h3 class="detailed-title">Детальный анализ</h3>
+                        <div id="warningsList" class="warnings-list">
+                            <!-- Сюда добавятся предупреждения -->
+                        </div>
+                    </div>
+                    
+                    <div class="actions">
+                        <button id="newScanBtn" class="action-btn secondary">Новая проверка</button>
+                        <button id="copyBtn" class="action-btn secondary">Копировать отчет</button>
+                        <a href="https://github.com/lox-clou" target="_blank" class="action-btn github-btn">
+                            <span>⭐ lox-clou на GitHub</span>
+                        </a>
+                    </div>
+                </section>
 
-    <footer class="footer">
-        <div class="container">
-            <p>⚠️ <strong>Важно:</strong> Этот инструмент не дает 100% гарантии. Всегда проверяйте сайты вручную.</p>
-            <p class="footer-links">
-                <a href="about.html">О проекте</a> • 
-                <a href="#" id="disclaimerBtn">Отказ от ответственности</a> • 
-                <a href="https://github.com/yourusername/phishscan-site">GitHub</a>
-            </p>
-            <p class="copyright">© 2024 PhishScan. Только для образовательных целей.</p>
-        </div>
-    </footer>
+                <!-- Как работает -->
+                <section id="how-it-works" class="info-section">
+                    <h2>🔧 Как работает FishScan?</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">1</div>
+                            <h3>Анализ структуры URL</h3>
+                            <p>Проверяем домен на подозрительные паттерны, слишком длинные названия, множественные дефисы.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">2</div>
+                            <h3>Обнаружение имитаций</h3>
+                            <p>Ищем домены, похожие на популярные сервисы (например, faceb00k вместо facebook).</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">3</div>
+                            <h3>Ключевые слова</h3>
+                            <p>Сканируем URL на наличие слов: login, verify, password, account, banking и других.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">4</div>
+                            <h3>Проверка соединения</h3>
+                            <p>Определяем, использует ли сайт защищённый HTTPS вместо уязвимого HTTP.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Советы -->
+                <section id="tips" class="info-section tips-section">
+                    <h2>🛡️ Как защититься от фишинга?</h2>
+                    <div class="tips-grid">
+                        <div class="tip-card">
+                            <div class="tip-icon">🔐</div>
+                            <div class="tip-content">
+                                <h3>Проверяйте адресную строку</h3>
+                                <p>Всегда смотрите на URL сайта перед вводом данных. Обращайте внимание на опечатки.</p>
+                            </div>
+                        </div>
+                        <div class="tip-card">
+                            <div class="tip-icon">👁️</div>
+                            <div class="tip-content">
+                                <h3>Ищите HTTPS</h3>
+                                <p>Безопасные сайты всегда используют HTTPS. Если его нет — данные передаются открыто.</p>
+                            </div>
+                        </div>
+                        <div class="tip-card">
+                            <div class="tip-icon">🚫</div>
+                            <div class="tip-content">
+                                <h3>Не доверяйте слепо</h3>
+                                <p>Не вводите личные данные на сайтах, пришедших по подозрительным ссылкам.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- О проекте -->
+                <section id="about" class="info-section about-section">
+                    <h2>🐟 О проекте FishScan</h2>
+                    <div class="about-content">
+                        <p>Этот инструмент разработан <strong>@lox-clou</strong> для образовательных целей и проверки собственных ресурсов.</p>
+                        <div class="about-features">
+                            <div class="about-feature">
+                                <strong>Бесплатно</strong>
+                                <p>Не требует оплаты или регистрации</p>
+                            </div>
+                            <div class="about-feature">
+                                <strong>Конфиденциально</strong>
+                                <p>Все проверки происходят в вашем браузере</p>
+                            </div>
+                            <div class="about-feature">
+                                <strong>Открытый код</strong>
+                                <p>Исходный код доступен на GitHub</p>
+                            </div>
+                        </div>
+                        <p class="disclaimer">
+                            ⚠️ <strong>Важно:</strong> FishScan не гарантирует 100% защиту. 
+                            Это инструмент для первичной проверки. Всегда используйте дополнительные средства защиты.
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Подвал -->
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-logo">
+                        🐟 FishScan <span class="footer-credits">by @lox-clou</span>
+                    </div>
+                    <div class="footer-links">
+                        <a href="https://github.com/lox-clou/fishscan" target="_blank">GitHub репозиторий</a>
+                        <a href="https://github.com/lox-clou" target="_blank">Другие проекты</a>
+                        <a href="#" id="disclaimerBtn">Отказ от ответственности</a>
+                    </div>
+                    <p class="footer-copyright">
+                        © 2024 FishScan. Образовательный проект. 
+                        <br>Иконки: emoji. Дизайн: lox-clou.
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </div>
 
     <script src="scanner.js"></script>
 </body>
