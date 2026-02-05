@@ -3,391 +3,644 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FishScan - Проверь сайт на фишинг за секунды</title>
-    <meta name="description" content="Бесплатный сервис для проверки сайтов на фишинг. Узнай, безопасен ли сайт, прежде чем вводить данные.">
+    <title>FishScan 2.0 - Мощный антифишинг сканер</title>
+    <meta name="description" content="Продвинутый сканер фишинга с базой угроз, проверкой в реальном времени и AI-анализом">
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐟</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Главный контейнер -->
-    <div class="main-wrapper">
-        
-        <!-- Шапка сайта -->
-        <header class="site-header">
-            <div class="container">
-                <div class="header-inner">
-                    <div class="logo-block">
-                        <div class="logo-icon">🐟</div>
-                        <div class="logo-text">
-                            <h1>FishScan</h1>
-                            <p class="logo-subtitle">проверка сайтов на фишинг</p>
-                        </div>
+    <div class="app-container">
+        <!-- Боковая панель -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">🛡️</div>
+                    <div class="logo-text">
+                        <h1>FishScan</h1>
+                        <p class="version">v2.0</p>
                     </div>
-                    
-                    <div class="header-info">
-                        <div class="creator-badge">
-                            <span class="creator-icon">👨‍💻</span>
-                            <span class="creator-text">сделал <a href="https://github.com/lox-clou" target="_blank">lox-clou</a></span>
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#scanner" class="nav-item active" data-tab="scanner">
+                    <i class="fas fa-search"></i>
+                    <span>Сканер</span>
+                </a>
+                <a href="#history" class="nav-item" data-tab="history">
+                    <i class="fas fa-history"></i>
+                    <span>История</span>
+                    <span class="badge" id="historyCount">0</span>
+                </a>
+                <a href="#threats" class="nav-item" data-tab="threats">
+                    <i class="fas fa-database"></i>
+                    <span>База угроз</span>
+                    <span class="badge" id="threatsCount">1,234</span>
+                </a>
+                <a href="#api" class="nav-item" data-tab="api">
+                    <i class="fas fa-code"></i>
+                    <span>API</span>
+                </a>
+                <a href="#settings" class="nav-item" data-tab="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Настройки</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name">Гость</div>
+                        <div class="user-status">
+                            <span class="status-dot online"></span>
+                            Онлайн
                         </div>
                     </div>
                 </div>
+                <div class="stats-mini">
+                    <div class="stat-item">
+                        <div class="stat-value" id="miniScans">0</div>
+                        <div class="stat-label">проверок</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="miniThreats">0</div>
+                        <div class="stat-label">угроз</div>
+                    </div>
+                </div>
             </div>
-        </header>
+        </aside>
 
         <!-- Основной контент -->
-        <main class="content-area">
-            <div class="container">
-                
-                <!-- Приветственный блок -->
-                <section class="welcome-section">
-                    <div class="welcome-content">
-                        <h2 class="welcome-title">Отлови фишинг сайты</h2>
-                        <p class="welcome-subtitle">Проверь любой сайт на безопасность. Бесплатно и без регистрации.</p>
-                        
-                        <!-- Статистика (если есть) -->
-                        <div class="stats-preview">
-                            <div class="stat-item">
-                                <span class="stat-number">15+</span>
-                                <span class="stat-label">проверок сегодня</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-number">99%</span>
-                                <span class="stat-label">точность</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-number">0₽</span>
-                                <span class="stat-label">бесплатно</span>
-                            </div>
-                        </div>
+        <main class="main-content">
+            <!-- Заголовок -->
+            <header class="main-header">
+                <div class="header-content">
+                    <h2 id="pageTitle">Сканер фишинга</h2>
+                    <div class="header-actions">
+                        <button class="btn-icon" id="darkModeToggle" title="Тёмная тема">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button class="btn-icon" id="notificationsBtn" title="Уведомления">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                        <button class="btn-icon" id="fullscreenBtn" title="Полный экран">
+                            <i class="fas fa-expand"></i>
+                        </button>
                     </div>
-                </section>
+                </div>
+            </header>
 
-                <!-- Основной сканер -->
-                <section class="scanner-section">
-                    <div class="scanner-card">
-                        <div class="scanner-header">
-                            <h3>📡 Проверить сайт</h3>
-                            <p class="scanner-description">Вставьте ссылку на сайт, который хотите проверить</p>
+            <!-- Контейнер для вкладок -->
+            <div class="tab-content">
+                <!-- Вкладка Сканера -->
+                <div id="scannerTab" class="tab-pane active">
+                    <div class="scanner-container">
+                        <!-- Быстрая панель -->
+                        <div class="quick-actions">
+                            <div class="quick-action" id="quickCheck">
+                                <div class="action-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div class="action-text">
+                                    <h3>Быстрая проверка</h3>
+                                    <p>Вставьте ссылку и нажмите Enter</p>
+                                </div>
+                            </div>
+                            <div class="quick-action" id="bulkCheck">
+                                <div class="action-icon">
+                                    <i class="fas fa-list"></i>
+                                </div>
+                                <div class="action-text">
+                                    <h3>Массовая проверка</h3>
+                                    <p>До 10 URL за раз</p>
+                                </div>
+                            </div>
+                            <div class="quick-action" id="domainMonitor">
+                                <div class="action-icon">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <div class="action-text">
+                                    <h3>Мониторинг</h3>
+                                    <p>Следите за изменениями</p>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="scanner-body">
-                            <!-- Поле ввода -->
-                            <div class="input-wrapper">
-                                <div class="input-group">
-                                    <div class="input-icon">🔗</div>
-                                    <input 
-                                        type="text" 
-                                        id="urlInput"
-                                        class="url-input"
-                                        placeholder="https://ваш-сайт.ru"
-                                        autocomplete="off"
-                                        aria-label="Введите URL сайта для проверки">
+
+                        <!-- Основной сканер -->
+                        <div class="scanner-card">
+                            <div class="scanner-header">
+                                <h3><i class="fas fa-shield-alt"></i> Проверка безопасности сайта</h3>
+                                <div class="scanner-modes">
+                                    <button class="mode-btn active" data-mode="fast">
+                                        <i class="fas fa-running"></i> Быстрая
+                                    </button>
+                                    <button class="mode-btn" data-mode="deep">
+                                        <i class="fas fa-search-plus"></i> Глубокая
+                                    </button>
+                                    <button class="mode-btn" data-mode="ai">
+                                        <i class="fas fa-brain"></i> AI-анализ
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="scanner-body">
+                                <!-- Ввод URL -->
+                                <div class="url-input-container">
+                                    <div class="input-with-dropdown">
+                                        <div class="input-icon">
+                                            <i class="fas fa-link"></i>
+                                        </div>
+                                        <input 
+                                            type="text" 
+                                            id="urlInput"
+                                            class="url-input"
+                                            placeholder="https://подозрительный-сайт.com или вставьте несколько ссылок"
+                                            autocomplete="off"
+                                            spellcheck="false">
+                                        <div class="input-dropdown">
+                                            <div class="dropdown-item" data-url="https://github.com">
+                                                <i class="fab fa-github"></i>
+                                                github.com
+                                            </div>
+                                            <div class="dropdown-item" data-url="http://faceb00k-login.ru">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                faceb00k-login.ru
+                                            </div>
+                                            <div class="dropdown-item" data-url="https://lox-clou.github.io">
+                                                <i class="fas fa-code"></i>
+                                                lox-clou.github.io
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                     <div class="input-actions">
-                                        <button id="clearBtn" class="clear-btn" title="Очистить поле">
-                                            ✕
+                                        <button class="btn-action" id="pasteBtn" title="Вставить из буфера">
+                                            <i class="fas fa-paste"></i>
+                                        </button>
+                                        <button class="btn-action" id="clearBtn" title="Очистить">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                        <button class="btn-action" id="fileUploadBtn" title="Загрузить файл">
+                                            <i class="fas fa-upload"></i>
+                                            <input type="file" id="fileInput" accept=".txt,.csv" hidden>
+                                        </button>
+                                        <button class="btn-scan" id="scanBtn">
+                                            <i class="fas fa-play"></i>
+                                            <span>Начать проверку</span>
+                                            <div class="scan-progress" id="scanProgress"></div>
                                         </button>
                                     </div>
                                 </div>
-                                
-                                <button id="scanBtn" class="scan-button">
-                                    <span class="btn-icon">🔍</span>
-                                    <span class="btn-text">Проверить безопасность</span>
-                                    <span class="loading-spinner" id="spinner"></span>
+
+                                <!-- Дополнительные опции -->
+                                <div class="scanner-options">
+                                    <div class="option-group">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="checkSsl" checked>
+                                            <span class="checkmark"></span>
+                                            Проверять SSL-сертификат
+                                        </label>
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="checkWhois" checked>
+                                            <span class="checkmark"></span>
+                                            Проверять WHOIS
+                                        </label>
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="checkDns">
+                                            <span class="checkmark"></span>
+                                            Проверять DNS-записи
+                                        </label>
+                                    </div>
+                                    <div class="option-group">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="useAi" checked>
+                                            <span class="checkmark"></span>
+                                            Использовать AI-анализ
+                                        </label>
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="saveHistory" checked>
+                                            <span class="checkmark"></span>
+                                            Сохранять в историю
+                                        </label>
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="sendReport">
+                                            <span class="checkmark"></span>
+                                            Отправить отчёт на email
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Предпросмотр результатов -->
+                                <div class="preview-results hidden" id="previewResults">
+                                    <div class="preview-header">
+                                        <h4><i class="fas fa-chart-line"></i> Предварительный анализ</h4>
+                                        <button class="btn-close-preview" id="closePreview">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                    <div class="preview-content">
+                                        <div class="preview-metrics">
+                                            <div class="preview-metric">
+                                                <div class="metric-label">Риск фишинга</div>
+                                                <div class="metric-value high">85%</div>
+                                            </div>
+                                            <div class="preview-metric">
+                                                <div class="metric-label">Безопасность</div>
+                                                <div class="metric-value low">2/10</div>
+                                            </div>
+                                            <div class="preview-metric">
+                                                <div class="metric-label">Доверие</div>
+                                                <div class="metric-value medium">45%</div>
+                                            </div>
+                                        </div>
+                                        <div class="preview-chart">
+                                            <canvas id="riskChart" width="300" height="100"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Виджеты -->
+                        <div class="widgets-grid">
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <h4><i class="fas fa-fire"></i> Активные угрозы</h4>
+                                    <span class="widget-badge danger">12</span>
+                                </div>
+                                <div class="widget-content">
+                                    <div class="threat-list">
+                                        <div class="threat-item">
+                                            <div class="threat-icon">
+                                                <i class="fas fa-skull-crossbones"></i>
+                                            </div>
+                                            <div class="threat-info">
+                                                <div class="threat-domain">paypal-verify.xyz</div>
+                                                <div class="threat-time">5 мин назад</div>
+                                            </div>
+                                            <div class="threat-risk high">Высокий</div>
+                                        </div>
+                                        <div class="threat-item">
+                                            <div class="threat-icon">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                            </div>
+                                            <div class="threat-info">
+                                                <div class="threat-domain">facebook-login.ru</div>
+                                                <div class="threat-time">15 мин назад</div>
+                                            </div>
+                                            <div class="threat-risk medium">Средний</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <h4><i class="fas fa-chart-bar"></i> Статистика</h4>
+                                </div>
+                                <div class="widget-content">
+                                    <div class="stats-widget">
+                                        <div class="stat-widget-item">
+                                            <div class="stat-widget-value">1,245</div>
+                                            <div class="stat-widget-label">Проверок сегодня</div>
+                                        </div>
+                                        <div class="stat-widget-item">
+                                            <div class="stat-widget-value">94.7%</div>
+                                            <div class="stat-widget-label">Точность</div>
+                                        </div>
+                                        <div class="stat-widget-item">
+                                            <div class="stat-widget-value">2.1с</div>
+                                            <div class="stat-widget-label">Среднее время</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <h4><i class="fas fa-clock"></i> Последние проверки</h4>
+                                </div>
+                                <div class="widget-content">
+                                    <div class="recent-scans">
+                                        <div class="scan-item safe">
+                                            <div class="scan-domain">google.com</div>
+                                            <div class="scan-time">2 мин назад</div>
+                                        </div>
+                                        <div class="scan-item warning">
+                                            <div class="scan-domain">secure-bank.net</div>
+                                            <div class="scan-time">10 мин назад</div>
+                                        </div>
+                                        <div class="scan-item safe">
+                                            <div class="scan-domain">github.com</div>
+                                            <div class="scan-time">25 мин назад</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка Истории -->
+                <div id="historyTab" class="tab-pane">
+                    <div class="history-container">
+                        <div class="section-header">
+                            <h3><i class="fas fa-history"></i> История проверок</h3>
+                            <div class="section-actions">
+                                <button class="btn-secondary" id="clearHistory">
+                                    <i class="fas fa-trash"></i> Очистить историю
+                                </button>
+                                <button class="btn-secondary" id="exportHistory">
+                                    <i class="fas fa-download"></i> Экспорт
+                                </button>
+                                <button class="btn-secondary" id="filterHistory">
+                                    <i class="fas fa-filter"></i> Фильтр
                                 </button>
                             </div>
-                            
-                            <!-- Быстрые примеры -->
-                            <div class="quick-examples">
-                                <p class="examples-title">Попробуйте на примерах:</p>
-                                <div class="examples-list">
-                                    <button type="button" class="example-btn" data-url="https://github.com">
-                                        <span class="example-icon">✅</span>
-                                        <span class="example-text">Безопасный сайт</span>
-                                        <span class="example-url">github.com</span>
-                                    </button>
-                                    
-                                    <button type="button" class="example-btn suspicious" data-url="http://faceb00k-login.ru">
-                                        <span class="example-icon">⚠️</span>
-                                        <span class="example-text">Подозрительный</span>
-                                        <span class="example-url">faceb00k-login.ru</span>
-                                    </button>
-                                    
-                                    <button type="button" class="example-btn" data-url="https://lox-clou.github.io">
-                                        <span class="example-icon">👨‍💻</span>
-                                        <span class="example-text">Наш сайт</span>
-                                        <span class="example-url">lox-clou.github.io</span>
-                                    </button>
-                                </div>
+                        </div>
+                        
+                        <div class="history-filters">
+                            <div class="filter-group">
+                                <select id="timeFilter" class="filter-select">
+                                    <option value="all">Всё время</option>
+                                    <option value="today">Сегодня</option>
+                                    <option value="week">Неделя</option>
+                                    <option value="month">Месяц</option>
+                                </select>
+                                <select id="riskFilter" class="filter-select">
+                                    <option value="all">Все риски</option>
+                                    <option value="safe">Безопасные</option>
+                                    <option value="low">Низкий риск</option>
+                                    <option value="medium">Средний риск</option>
+                                    <option value="high">Высокий риск</option>
+                                </select>
+                                <input type="text" class="filter-input" placeholder="Поиск по домену...">
                             </div>
-                            
-                            <!-- Подсказка -->
-                            <div class="scanner-tip">
-                                <div class="tip-icon">💡</div>
-                                <p>Проверяйте сайты перед вводом паролей или данных карт</p>
+                        </div>
+                        
+                        <div class="history-table-container">
+                            <table class="history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Время</th>
+                                        <th>Домен</th>
+                                        <th>Риск</th>
+                                        <th>Безопасность</th>
+                                        <th>Детали</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTableBody">
+                                    <!-- История загружается динамически -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="history-empty" id="historyEmpty">
+                            <div class="empty-state">
+                                <i class="fas fa-history fa-3x"></i>
+                                <h4>История пуста</h4>
+                                <p>Проверенные сайты появятся здесь</p>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
-                <!-- Результаты (изначально скрыто) -->
-                <section id="resultsSection" class="results-section hidden">
-                    <div class="results-card">
-                        <!-- Заголовок результатов -->
-                        <div class="results-header">
-                            <div class="results-title-block">
-                                <h3>Результат проверки</h3>
-                                <div class="scan-time" id="scanTime"></div>
+                <!-- Вкладка Базы угроз -->
+                <div id="threatsTab" class="tab-pane">
+                    <div class="threats-container">
+                        <div class="section-header">
+                            <h3><i class="fas fa-database"></i> База угроз</h3>
+                            <div class="threats-stats">
+                                <div class="threat-stat">
+                                    <span class="stat-number">15,482</span>
+                                    <span class="stat-label">Всего записей</span>
+                                </div>
+                                <div class="threat-stat">
+                                    <span class="stat-number">1,234</span>
+                                    <span class="stat-label">Активные</span>
+                                </div>
+                                <div class="threat-stat">
+                                    <span class="stat-number">98.3%</span>
+                                    <span class="stat-label">Обновлено сегодня</span>
+                                </div>
                             </div>
-                            
-                            <button id="closeResults" class="close-results" title="Закрыть результаты">
-                                ✕
-                            </button>
                         </div>
                         
-                        <!-- Основные метрики -->
-                        <div class="metrics-grid">
-                            <div class="metric-card">
-                                <div class="metric-icon">🌐</div>
-                                <div class="metric-content">
-                                    <h4>Проверенный сайт</h4>
-                                    <p id="domainResult" class="metric-value">—</p>
+                        <div class="threats-search">
+                            <div class="search-container">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Поиск в базе угроз..." id="threatSearch">
+                                <button class="btn-search">Найти</button>
+                            </div>
+                            <div class="search-filters">
+                                <span class="filter-tag active">Все</span>
+                                <span class="filter-tag">Фишинг</span>
+                                <span class="filter-tag">Мошенничество</span>
+                                <span class="filter-tag">Вредоносные</span>
+                                <span class="filter-tag">Поддельные</span>
+                                <span class="filter-tag">Новые</span>
+                            </div>
+                        </div>
+                        
+                        <div class="threats-grid" id="threatsGrid">
+                            <!-- Угрозы загружаются динамически -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка API -->
+                <div id="apiTab" class="tab-pane">
+                    <div class="api-container">
+                        <div class="section-header">
+                            <h3><i class="fas fa-code"></i> API FishScan</h3>
+                            <div class="api-badges">
+                                <span class="api-badge"><i class="fas fa-check"></i> REST API</span>
+                                <span class="api-badge"><i class="fas fa-check"></i> WebSocket</span>
+                                <span class="api-badge"><i class="fas fa-check"></i> GraphQL</span>
+                            </div>
+                        </div>
+                        
+                        <div class="api-docs">
+                            <div class="api-endpoints">
+                                <h4><i class="fas fa-link"></i> Конечные точки</h4>
+                                <div class="endpoint">
+                                    <div class="endpoint-method get">GET</div>
+                                    <div class="endpoint-path">/api/v1/scan?url={url}</div>
+                                    <div class="endpoint-desc">Быстрая проверка URL</div>
+                                </div>
+                                <div class="endpoint">
+                                    <div class="endpoint-method post">POST</div>
+                                    <div class="endpoint-path">/api/v1/bulk-scan</div>
+                                    <div class="endpoint-desc">Массовая проверка</div>
+                                </div>
+                                <div class="endpoint">
+                                    <div class="endpoint-method get">GET</div>
+                                    <div class="endpoint-path">/api/v1/threats/{domain}</div>
+                                    <div class="endpoint-desc">Проверка в базе угроз</div>
                                 </div>
                             </div>
                             
-                            <div class="metric-card">
-                                <div class="metric-icon">🔒</div>
-                                <div class="metric-content">
-                                    <h4>Защита данных</h4>
-                                    <p id="securityResult" class="metric-value">—</p>
+                            <div class="api-example">
+                                <h4><i class="fas fa-code"></i> Пример использования</h4>
+                                <pre><code class="javascript">// JavaScript пример
+const apiKey = 'YOUR_API_KEY';
+const url = 'https://api.fishscan.com/v1/scan';
+
+fetch(`${url}?api_key=${apiKey}&url=example.com`)
+    .then(response => response.json())
+    .then(data => {
+        console.log('Риск фишинга:', data.risk_score);
+        console.log('Безопасен:', data.is_safe);
+    });</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вкладка Настроек -->
+                <div id="settingsTab" class="tab-pane">
+                    <div class="settings-container">
+                        <div class="section-header">
+                            <h3><i class="fas fa-cog"></i> Настройки</h3>
+                        </div>
+                        
+                        <div class="settings-grid">
+                            <div class="settings-card">
+                                <h4><i class="fas fa-bell"></i> Уведомления</h4>
+                                <div class="setting-item">
+                                    <label>Email уведомления</label>
+                                    <input type="email" placeholder="your@email.com">
+                                </div>
+                                <div class="setting-item">
+                                    <label>Telegram бот</label>
+                                    <input type="text" placeholder="@your_bot">
+                                </div>
+                                <div class="setting-item">
+                                    <label>Порог уведомлений</label>
+                                    <select>
+                                        <option>Только высокий риск</option>
+                                        <option>Средний и выше</option>
+                                        <option>Все проверки</option>
+                                    </select>
                                 </div>
                             </div>
                             
-                            <div class="metric-card">
-                                <div class="metric-icon">📊</div>
-                                <div class="metric-content">
-                                    <h4>Общий риск</h4>
-                                    <div class="risk-level" id="riskLevel">
-                                        <span class="risk-dot"></span>
-                                        <span class="risk-text">Проверяется...</span>
+                            <div class="settings-card">
+                                <h4><i class="fas fa-shield-alt"></i> Безопасность</h4>
+                                <div class="setting-item">
+                                    <label class="checkbox">
+                                        <input type="checkbox" checked>
+                                        <span class="checkmark"></span>
+                                        Автоматическое обновление базы
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <label class="checkbox">
+                                        <input type="checkbox" checked>
+                                        <span class="checkmark"></span>
+                                        AI-анализ угроз
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <label class="checkbox">
+                                        <input type="checkbox">
+                                        <span class="checkmark"></span>
+                                        Анонимная статистика
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-card">
+                                <h4><i class="fas fa-palette"></i> Внешний вид</h4>
+                                <div class="theme-selector">
+                                    <div class="theme-option active" data-theme="light">
+                                        <div class="theme-preview light"></div>
+                                        <span>Светлая</span>
+                                    </div>
+                                    <div class="theme-option" data-theme="dark">
+                                        <div class="theme-preview dark"></div>
+                                        <span>Тёмная</span>
+                                    </div>
+                                    <div class="theme-option" data-theme="auto">
+                                        <div class="theme-preview auto"></div>
+                                        <span>Авто</span>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <div class="metric-card">
-                                <div class="metric-icon">⚠️</div>
-                                <div class="metric-content">
-                                    <h4>Проблемы найдены</h4>
-                                    <p id="issuesCount" class="metric-value">—</p>
+                                <div class="setting-item">
+                                    <label>Размер шрифта</label>
+                                    <input type="range" min="12" max="20" value="16">
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Детальный анализ -->
-                        <div class="detailed-analysis">
-                            <h4>Что мы проверили:</h4>
-                            <div id="analysisList" class="analysis-list">
-                                <!-- Сюда добавляются пункты анализа -->
-                                <div class="analysis-item loading">
-                                    <div class="analysis-icon">⏳</div>
-                                    <div class="analysis-content">
-                                        <p>Загружаем результаты проверки...</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Рекомендации -->
-                        <div class="recommendations-box">
-                            <div class="recommendations-header">
-                                <div class="rec-icon">🎯</div>
-                                <h4>Что делать дальше?</h4>
-                            </div>
-                            <div id="recommendationsList" class="recommendations-list">
-                                <!-- Сюда добавляются рекомендации -->
-                            </div>
-                        </div>
-                        
-                        <!-- Кнопки действий -->
-                        <div class="action-buttons">
-                            <button id="newCheckBtn" class="action-btn primary">
-                                <span class="btn-icon">🔄</span>
-                                Проверить другой сайт
-                            </button>
-                            <button id="copyReportBtn" class="action-btn secondary">
-                                <span class="btn-icon">📋</span>
-                                Скопировать отчёт
-                            </button>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Как это работает -->
-                <section class="how-it-works">
-                    <div class="section-header">
-                        <h2>Как это работает?</h2>
-                        <p>Простая и понятная проверка в три этапа</p>
-                    </div>
-                    
-                    <div class="steps-grid">
-                        <div class="step-card">
-                            <div class="step-number">1</div>
-                            <div class="step-content">
-                                <h3>Вводите ссылку</h3>
-                                <p>Просто скопируйте и вставьте адрес сайта, который хотите проверить.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="step-card">
-                            <div class="step-number">2</div>
-                            <div class="step-content">
-                                <h3>Мы проверяем</h3>
-                                <p>Анализируем сайт по 50+ параметрам безопасности.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="step-card">
-                            <div class="step-number">3</div>
-                            <div class="step-content">
-                                <h3>Получаете ответ</h3>
-                                <p>Узнаёте, безопасен ли сайт и что делать дальше.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Советы по безопасности -->
-                <section class="safety-tips">
-                    <div class="section-header">
-                        <h2>Как не попасться на фишинг?</h2>
-                        <p>Простые правила, которые спасут ваши данные</p>
-                    </div>
-                    
-                    <div class="tips-grid">
-                        <div class="tip-card">
-                            <div class="tip-icon">🔍</div>
-                            <div class="tip-content">
-                                <h3>Смотрите на адрес</h3>
-                                <p>Перед вводом данных проверьте адресную строку. Опечатки типа "faceb00k" вместо "facebook" — это фишинг.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="tip-card">
-                            <div class="tip-icon">🔒</div>
-                            <div class="tip-content">
-                                <h3>Ищите замочек</h3>
-                                <p>Безопасные сайты используют HTTPS. Если его нет — ваши данные могут перехватить.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="tip-card">
-                            <div class="tip-icon">🚫</div>
-                            <div class="tip-content">
-                                <h3>Не доверяйте слепо</h3>
-                                <p>Даже если письмо пришло от друга — проверьте ссылку перед переходом.</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="final-tip">
-                        <div class="final-tip-icon">🐟</div>
-                        <div class="final-tip-content">
-                            <p><strong>FishScan поможет проверить любой сайт.</strong> Просто введите ссылку выше.</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- О проекте -->
-                <section class="about-project">
-                    <div class="about-card">
-                        <div class="about-header">
-                            <h2>О проекте FishScan</h2>
-                        </div>
-                        
-                        <div class="about-content">
-                            <p>Это бесплатный сервис для проверки сайтов на фишинг. Создан, чтобы помочь людям защитить свои данные.</p>
-                            
-                            <div class="about-features">
-                                <div class="feature">
-                                    <div class="feature-icon">💰</div>
-                                    <div class="feature-text">
-                                        <strong>Бесплатно навсегда</strong>
-                                        <p>Никаких скрытых платежей</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="feature">
-                                    <div class="feature-icon">👁️</div>
-                                    <div class="feature-text">
-                                        <strong>Конфиденциально</strong>
-                                        <p>Ваши данные остаются у вас</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="feature">
-                                    <div class="feature-icon">🔓</div>
-                                    <div class="feature-text">
-                                        <strong>Открытый код</strong>
-                                        <p>Проверьте, как это работает</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="creator-info">
-                                <p>Сделано с ❤️ <a href="https://github.com/lox-clou" target="_blank">lox-clou</a></p>
-                                <p class="small-text">Если нашли ошибку или есть идеи — напишите на GitHub</p>
-                            </div>
-                            
-                            <div class="disclaimer">
-                                <p><strong>Важно:</strong> FishScan не даёт 100% гарантии. Это инструмент для помощи, а не замена внимательности.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </main>
-
-        <!-- Подвал -->
-        <footer class="site-footer">
-            <div class="container">
-                <div class="footer-content">
-                    <div class="footer-main">
-                        <div class="footer-logo">
-                            <span class="footer-logo-icon">🐟</span>
-                            <div class="footer-logo-text">
-                                <h3>FishScan</h3>
-                                <p>Проверка сайтов на фишинг</p>
-                            </div>
-                        </div>
-                        
-                        <div class="footer-links">
-                            <a href="https://github.com/lox-clou/fishscan" target="_blank" class="footer-link">
-                                <span class="link-icon">📁</span>
-                                Исходный код
-                            </a>
-                            <a href="https://github.com/lox-clou" target="_blank" class="footer-link">
-                                <span class="link-icon">👨‍💻</span>
-                                Автор проекта
-                            </a>
-                            <button id="faqBtn" class="footer-link">
-                                <span class="link-icon">❓</span>
-                                Вопросы и ответы
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="footer-bottom">
-                        <p class="copyright">© 2024 FishScan. Образовательный проект.</p>
-                        <p class="footer-note">Пользуйтесь интернетом безопасно!</p>
                     </div>
                 </div>
             </div>
-        </footer>
 
-        <!-- Всплывающие уведомления -->
-        <div id="notification" class="notification hidden"></div>
+            <!-- Панель результатов -->
+            <div id="resultsPanel" class="results-panel hidden">
+                <div class="results-header">
+                    <h3><i class="fas fa-chart-pie"></i> Результаты проверки</h3>
+                    <div class="results-actions">
+                        <button class="btn-icon" id="exportResults">
+                            <i class="fas fa-file-export"></i>
+                        </button>
+                        <button class="btn-icon" id="printResults">
+                            <i class="fas fa-print"></i>
+                        </button>
+                        <button class="btn-icon" id="closeResults">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="results-content">
+                    <!-- Результаты загружаются динамически -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Уведомления -->
+        <div class="notifications-container" id="notificationsContainer">
+            <div class="notifications-header">
+                <h4>Уведомления</h4>
+                <button class="btn-icon" id="closeNotifications">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="notifications-list">
+                <!-- Уведомления загружаются динамически -->
+            </div>
+        </div>
+
+        <!-- Модальные окна -->
+        <div id="bulkModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Массовая проверка URL</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <textarea placeholder="Введите до 10 URL, каждый с новой строки..." rows="10"></textarea>
+                    <div class="modal-actions">
+                        <button class="btn-secondary">Отмена</button>
+                        <button class="btn-primary">Начать проверку</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Подключаем скрипт -->
+    <!-- Подключаем скрипты -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="scanner.js"></script>
 </body>
 </html>
